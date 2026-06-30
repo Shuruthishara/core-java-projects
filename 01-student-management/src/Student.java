@@ -1,16 +1,25 @@
 public class Student {
     private String studentID;
     private String name;
-    private String age;
+    private int age;
     private String department;
     private String email;
 
-    Student(String studentID, String name, String age, String department, String email) {
+    Student(String studentID, String name, int age, String department, String email) {
         this.studentID = studentID;
         this.name = name;
         this.age = age;
         this.department = department;
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Student ID: " + studentID +
+               "\nName: " + name +
+               "\nAge: " + age +
+               "\nDepartment: " + department +
+               "\nEmail: " + email;
     }
 
     public String getStudentID() {
@@ -29,11 +38,11 @@ public class Student {
         this.name = name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return this.age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 

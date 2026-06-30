@@ -2,58 +2,57 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        int option;
-        StudentManagement studentManagement = new StudentManagement();
+        try (Scanner s = new Scanner(System.in)){
+            StudentManagement studentManagement = new StudentManagement(s);
+            int option = 0; //must
+            final int EXIT = 6;
 
-        do {
-            System.out.println();
-            System.out.println("---------------------------------");
-            System.out.println();
-            System.out.println("======== Student Management ========");
-            System.out.println();
-            System.out.println("1. Add Student");
-            System.out.println("2. View All Students");
-            System.out.println("3. Search Student");
-            System.out.println("4. Update Student");
-            System.out.println("5. Delete Student");
-            System.out.println("6. Exit");
-            System.out.println();
-            System.out.println("Choose an option:");
-            System.out.println();
+            do {
+                separator();
+                displayMenu();
 
-            option = s.nextInt();
-           
-            System.out.println();
-            System.out.println("---------------------------------");
-            System.out.println();
+                //To avoid fampus Scanner nextInt()/nextLine() problem.
+                // That is, no leftover newline left for Buffer to store.
+                //Also, catches when input is text.
+                try {
+                    option = Integer.parseInt(s.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("\nOption Invalid.");
+                    continue;
+                }
+            
+                separator();
 
-            switch (option) {
-                case 1: 
-                    studentManagement.addStudent();
-                    break;
-                case 2:
-                    studentManagement.viewAllStudent();
-                    break;
-                case 3:
-                    studentManagement.searchStudent();
-                    break;
-                case 4:
-                    studentManagement.updateStudent();
-                    break;
-                case 5:
-                    studentManagement.deleteStudent();
-                    break;
-                default:  
-                    if (option != 6)
-                        System.out.println("Enter valid option:");
-            }
-                     
-        } while(option != 6);
+                //Enhanced Switch (Java 14+)
+                switch (option) {
+                    case 1 -> studentManagement.addStudent();
+                    case 2 -> studentManagement.viewAllStudent();
+                    case 3 -> studentManagement.searchStudent();
+                    case 4 -> studentManagement.updateStudent();
+                    case 5 -> studentManagement.deleteStudent();
+                    case 6 -> System.out.println("Operation Ended. Thank You!");
+                    default -> System.out.println("Please enter a valid number.");
+                }                     
+            } while(option != EXIT);
+        }
+    }
+
+    public static void displayMenu() {
+        System.out.println("""
+                    ======== Student Management ========
         
-        if (option == 6)
-            System.out.println("Operattion Ended. Thank You!");
+                    1. Add Student
+                    2. View All Students
+                    3. Search Student
+                    4. Update Student
+                    5. Delete Student
+                    6. Exit
+        
+                    Choose an option:
+                        """);
+    }
 
-        s.close();
+    public static void separator() {
+       System.out.println("\n---------------------------------\n");
     }
 }

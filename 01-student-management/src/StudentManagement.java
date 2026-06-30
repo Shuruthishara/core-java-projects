@@ -1,9 +1,13 @@
 import java.util.*;
 
 public class StudentManagement {
-    Scanner s = new Scanner(System.in);
+    private Scanner s;
 
-    List<Student> studentList = new ArrayList<>();
+    public StudentManagement (Scanner s) {
+        this.s = s;
+    }
+
+    Map<String, Student> studentList = new TreeMap<>();
 
     public void addStudent() {
         System.out.println("Enter Student ID:");
@@ -13,7 +17,7 @@ public class StudentManagement {
         String name = s.nextLine();
 
         System.out.println("Enter Student age:");
-        String age = s.nextLine();
+        int age = Integer.parseInt(s.nextLine());
 
         System.out.println("Enter Student Department:");
         String department = s.nextLine();
@@ -22,97 +26,79 @@ public class StudentManagement {
         String email = s.nextLine();
 
         Student student = new Student(ID, name, age, department, email);
-        studentList.add(student);
+        studentList.put(ID, student);
+
+        System.out.println("\nStudent added.".toUpperCase());
     }
 
     public void viewAllStudent() {
-        if (studentList.size() == 0) {
-            System.out.println("No student record.");
+        if (studentList.isEmpty()) {
+            System.out.println("No student record.".toUpperCase());
         } else {
-            for (Student stu : studentList) {
-                System.out.println("Student ID: " + stu.getStudentID());
-                System.out.println("Name: " + stu.getName());
-                System.out.println("Age: " + stu.getAge());
-                System.out.println("Department: " + stu.getDepartment());
-                System.out.println("Email: " + stu.getEmail());
+            for (String studentID : studentList.keySet()) {
+                System.out.println("\n" + studentList.get(studentID));
             }
         }
     }
 
+    public Student findStudent(String searchID) {
+        return studentList.get(searchID);
+    }
+
     public void searchStudent() {
-        System.out.println("Enter Student ID:");
+        System.out.println("Enter Student ID to be searched:");
         String searchID = s.nextLine();
-        boolean found = false;
+        
+        Student foundStudent = findStudent(searchID);
 
-        for (Student stu : studentList) {
-            if(searchID.equals(stu.getStudentID())) {
-                found = true;
-
-                System.out.println("Student ID: " + stu.getStudentID());
-                System.out.println("Name: " + stu.getName());
-                System.out.println("Age: " + stu.getAge());
-                System.out.println("Department: " + stu.getDepartment());
-                System.out.println("Email: " + stu.getEmail());
-
-                break;
-            } 
+        //The following method is called 'Early Return'; preferrable.
+        if (foundStudent == null){
+            System.out.println("\nStudent not found.".toUpperCase());
+            return;
         }
 
-        if(!found)
-            System.out.println("Student not found!");
+        System.out.println("\n" + foundStudent);
     }
 
     public void updateStudent() {
         System.out.println("Enter Student ID to be updated:");
         String searchID = s.nextLine();
-        boolean found = false;
 
-        for (Student stu : studentList) {
-            if(searchID.equals(stu.getStudentID())) {
-                found = true;
+        Student foundStudent = findStudent(searchID);
 
-                System.out.println("Enter Student name:");
-                String name = s.nextLine();
-                stu.setName(name);
-
-                System.out.println("Enter Student age:");
-                String age = s.nextLine();
-                stu.setAge(age);
-
-                System.out.println("Enter Student Department:");
-                String department = s.nextLine();
-                stu.setDepartment(department);
-
-                System.out.println("Enter Student Email:");
-                String email = s.nextLine();
-                stu.setEmail(email);
-
-                System.out.println("Student Details updated");
-
-                break;
-            } 
+        if (foundStudent == null){
+            System.out.println("\nStudent not found.".toUpperCase());
+            return;
         }
 
-        if(!found)
-            System.out.println("Student not found!");
+        System.out.println("Enter Student name:");
+        String name = s.nextLine();
+        foundStudent.setName(name);
+
+        System.out.println("Enter Student age:");
+        int age = Integer.parseInt(s.nextLine());
+        foundStudent.setAge(age);
+
+        System.out.println("Enter Student Department:");
+        String department = s.nextLine();
+        foundStudent.setDepartment(department);
+
+        System.out.println("Enter Student Email:");
+        String email = s.nextLine();
+        foundStudent.setEmail(email);
+
+        System.out.println("\nStudent details updated.".toUpperCase());
     }
     
     public void deleteStudent() {
         System.out.println("Enter Student ID to be deleted:");
         String searchID = s.nextLine();
-        boolean found = false;
 
-        for (int i = 0; i < studentList.size(); i++) {
-            if(searchID.equals(studentList.get(i).getStudentID())) {
-                found = true;
+        Student removedStudent = studentList.remove(searchID);
 
-                studentList.remove(i);
-                System.out.println("Student Details deleted");
-                break;
-            } 
-        }
-
-        if(!found)
-            System.out.println("Student not found!");
+        if (removedStudent != null)
+            System.out.println("\nStudent deleted.".toUpperCase());
+        else
+            System.out.println("\nStudent not found.".toUpperCase());
     }
 }
