@@ -1,29 +1,32 @@
+package repository;
 import java.util.*;
+import model.Student;
+import util.InputUtil;
 
 public class StudentManagement {
-    private Scanner s;
+    private Scanner scanner;
 
-    public StudentManagement (Scanner s) {
-        this.s = s;
+    public StudentManagement (Scanner scanner) {
+        this.scanner = scanner;
     }
 
     Map<String, Student> studentList = new TreeMap<>();
 
     public void addStudent() {
         System.out.println("Enter Student ID:");
-        String ID = s.nextLine();
+        String ID = scanner.nextLine();
 
         System.out.println("Enter Student name:");
-        String name = s.nextLine();
+        String name = scanner.nextLine();
 
         System.out.println("Enter Student age:");
-        int age = Integer.parseInt(s.nextLine());
+        int age = InputUtil.readInt(scanner, "Enter a valid option: ");
 
         System.out.println("Enter Student Department:");
-        String department = s.nextLine();
+        String department = scanner.nextLine();
 
         System.out.println("Enter Student Email:");
-        String email = s.nextLine();
+        String email = scanner.nextLine();
 
         Student student = new Student(ID, name, age, department, email);
         studentList.put(ID, student);
@@ -47,7 +50,7 @@ public class StudentManagement {
 
     public void searchStudent() {
         System.out.println("Enter Student ID to be searched:");
-        String searchID = s.nextLine();
+        String searchID = scanner.nextLine();
         
         Student foundStudent = findStudent(searchID);
 
@@ -62,7 +65,7 @@ public class StudentManagement {
 
     public void updateStudent() {
         System.out.println("Enter Student ID to be updated:");
-        String searchID = s.nextLine();
+        String searchID = scanner.nextLine();
 
         Student foundStudent = findStudent(searchID);
 
@@ -72,19 +75,19 @@ public class StudentManagement {
         }
 
         System.out.println("Enter Student name:");
-        String name = s.nextLine();
+        String name = scanner.nextLine();
         foundStudent.setName(name);
 
         System.out.println("Enter Student age:");
-        int age = Integer.parseInt(s.nextLine());
+        int age = InputUtil.readInt(scanner, "Enter a valid age: ");
         foundStudent.setAge(age);
 
         System.out.println("Enter Student Department:");
-        String department = s.nextLine();
+        String department = scanner.nextLine();
         foundStudent.setDepartment(department);
 
         System.out.println("Enter Student Email:");
-        String email = s.nextLine();
+        String email = scanner.nextLine();
         foundStudent.setEmail(email);
 
         System.out.println("\nStudent details updated.".toUpperCase());
@@ -92,7 +95,7 @@ public class StudentManagement {
     
     public void deleteStudent() {
         System.out.println("Enter Student ID to be deleted:");
-        String searchID = s.nextLine();
+        String searchID = scanner.nextLine();
 
         Student removedStudent = studentList.remove(searchID);
 

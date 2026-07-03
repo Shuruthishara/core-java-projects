@@ -1,3 +1,4 @@
+package model;
 public class Student {
     private String studentID;
     private String name;
@@ -5,7 +6,7 @@ public class Student {
     private String department;
     private String email;
 
-    Student(String studentID, String name, int age, String department, String email) {
+    public Student(String studentID, String name, int age, String department, String email) {
         this.studentID = studentID;
         this.name = name;
         this.age = age;
