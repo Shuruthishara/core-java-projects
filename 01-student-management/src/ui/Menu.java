@@ -8,8 +8,14 @@ import service.*;
 import util.*;
 
 public class Menu {
-    Scanner scanner = new Scanner(System.in);
-    StudentService studentService = new StudentService();
+    private final Scanner scanner = new Scanner(System.in);
+    
+    //This way of declaring here is called Dependency Injection / Constructor Injection.
+    private final StudentService studentService;
+
+    public Menu(StudentService studentService){
+        this.studentService = studentService;
+    }
 
     public void start() {
         int option = 0; //must
@@ -51,10 +57,8 @@ public class Menu {
                         """);
     }
 
-    private void addStudentMenu() {
-        System.out.println("Enter Student ID:");
-        String ID = scanner.nextLine();
-
+    private Student readStudent(String ID) {
+        
         System.out.println("Enter Student name:");
         String name = scanner.nextLine();
 
@@ -67,18 +71,23 @@ public class Menu {
         System.out.println("Enter Student Email:");
         String email = scanner.nextLine();
 
-        Student student = new Student(ID, name, age, department, email);
-
-        studentService.addStudent(student);
-        System.out.println("\nStudent added.".toUpperCase());
-        // if(studentService.addStudent(student))
-        //     System.out.println("\nStudent added.".toUpperCase());
-        // else
-        //     System.out.println("\nStudent ID already exists".toUpperCase());
+        return new Student(ID, name, age, department, email);
     }
 
-    public void viewAllStudentMenu() {
-        Collection<Student> students = studentService.viewAllStudent();
+    private void addStudentMenu() {
+        System.out.println("Enter Student ID:");
+        String ID = scanner.nextLine();
+
+        Student student = readStudent(ID);
+
+        if(studentService.addStudent(student))
+            System.out.println("\nStudent added.".toUpperCase());
+        else
+            System.out.println("\nStudent ID already exists".toUpperCase());
+    }
+
+    private void viewAllStudentMenu() {
+        Collection<Student> students = studentService.getAllStudent();
 
         if (students.isEmpty()) {
             System.out.println("No student record.".toUpperCase());
@@ -88,11 +97,11 @@ public class Menu {
         }
     }
 
-    public void searchStudentMenu() {
+    private void searchStudentMenu() {
         System.out.println("Enter Student ID to be searched:");
         String searchID = scanner.nextLine();
         
-        Student foundStudent = studentService.searchStudent(searchID);
+        Student foundStudent = studentService.findStudentByID(searchID);
 
         //The following method is called 'Early Return'; preferrable.
         if (foundStudent == null){
@@ -103,38 +112,19 @@ public class Menu {
         System.out.println("\n" + foundStudent);
     }
 
-    public void updateStudentMenu() {
+    private void updateStudentMenu() {
         System.out.println("Enter Student ID to be updated:");
         String searchID = scanner.nextLine();
 
-        Student foundStudent = studentService.searchStudent(searchID);
+        Student updatedStudent = readStudent(searchID);
 
-        if (foundStudent == null){
-            System.out.println("\nStudent not found.".toUpperCase());
-            return;
-        }
-
-        System.out.println("Enter Student name:");
-        String name = scanner.nextLine();
-
-        System.out.println("Enter Student age:");
-        int age = InputUtil.readInt(scanner, "Enter a valid age: ");
-
-        System.out.println("Enter Student Department:");
-        String department = scanner.nextLine();
-
-        System.out.println("Enter Student Email:");
-        String email = scanner.nextLine();
-
-        Student student = new Student(searchID, name, age, department, email);
-
-        if(studentService.updateStudent(student))
+        if(studentService.addStudent(updatedStudent))
             System.out.println("\nStudent updated.".toUpperCase());
         else
             System.out.println("\nStudent details not updated".toUpperCase());
     }
 
-    public void deleteStudentMenu() {
+    private void deleteStudentMenu() {
         System.out.println("Enter Student ID to be deleted:");
         String searchID = scanner.nextLine();
 
@@ -144,5 +134,9 @@ public class Menu {
             System.out.println("\nStudent deleted.".toUpperCase());
         else
             System.out.println("\nStudent not found.".toUpperCase());
+    }
+
+    public void close() {
+        scanner.close();
     }
 }

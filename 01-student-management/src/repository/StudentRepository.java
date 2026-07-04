@@ -13,8 +13,12 @@ public class StudentRepository {
         studentList.put(student.getStudentID(), student);
     }
 
-    public Collection<Student> findAll() {
+    public Collection<Student> getAll() {
         return studentList.values();
+    }
+
+    public boolean existsByID(String ID) {
+        return studentList.containsKey(ID);
     }
 
     public Student findByID(String ID) {

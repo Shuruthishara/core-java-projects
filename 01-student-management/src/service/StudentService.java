@@ -5,34 +5,35 @@ import model.Student;
 import repository.StudentRepository;
 
 public class StudentService {
-    StudentRepository repository = new StudentRepository();
+    //This way of declaring here is called Dependency Injection / Constructor Injection.
+    private final StudentRepository repository;
 
-    // public boolean addStudent(Student student) {
-    //     if(repository.findByID(student.getStudentID()) != null){
-    //         repository.save(student);
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    public StudentService(StudentRepository repository){
+        this.repository = repository;
+    }
 
-    public void addStudent(Student student){
+    public boolean addStudent(Student student) {
+        if(repository.existsByID(student.getStudentID()))
+            return false;
+
         repository.save(student);
+        return true;
     }
 
-    public Collection<Student> viewAllStudent() {
-        return repository.findAll();
+    public Collection<Student> getAllStudent() {
+        return repository.getAll();
     }
 
-    public Student searchStudent(String ID) {        
+    public Student findStudentByID(String ID) {        
         return repository.findByID(ID);
     }
 
     public boolean updateStudent(Student student) {
-        if(repository.findByID(student.getStudentID()) != null){
-            repository.save(student);
-            return true;
-        }
-        return false;
+        if(!repository.existsByID(student.getStudentID()))
+            return false;
+
+        repository.save(student);
+        return true;
     }
     
     public Student deleteStudent(String ID) {
