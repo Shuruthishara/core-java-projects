@@ -24,6 +24,16 @@ public class Student {
                "\nEmail: " + email;
     }
 
+    public String toCSV() {
+        return String.join(",", 
+                            studentID,
+                            name,
+                            String.valueOf(age),
+                            department,
+                            email
+                        );
+    }
+
     public String getStudentID() {
         return this.studentID;
     }

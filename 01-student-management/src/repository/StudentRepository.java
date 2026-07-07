@@ -7,25 +7,41 @@ import java.util.TreeMap;
 import model.Student;
 
 public class StudentRepository {
-    Map<String, Student> studentList = new TreeMap<>();
+    //This way of declaring here is called Dependency Injection / Constructor Injection.
+    private final StudentFileStorage studentFileStorage;
+    Map<String, Student> studentMap = new TreeMap<>();
+
+
+    public StudentRepository(StudentFileStorage studentFileStorage) {
+        this.studentFileStorage = studentFileStorage;
+
+        //Loading existing file data to local TreeMap 
+        Collection<Student> students = studentFileStorage.loadStudentsFromFile();
+
+        for (Student student : students)
+            studentMap.put(student.getStudentID(), student);
+    }
 
     public void save(Student student) {
-        studentList.put(student.getStudentID(), student);
+        studentMap.put(student.getStudentID(), student);
+        studentFileStorage.saveStudentsToFile(studentMap.values());
     }
 
     public Collection<Student> getAll() {
-        return studentList.values();
+        return studentMap.values();
     }
 
     public boolean existsByID(String ID) {
-        return studentList.containsKey(ID);
+        return studentMap.containsKey(ID);
     }
 
     public Student findByID(String ID) {
-        return studentList.get(ID);
+        return studentMap.get(ID);
     }
 
     public Student deleteByID(String ID) {
-        return studentList.remove(ID);
+        Student removedStudent = studentMap.remove(ID);
+        studentFileStorage.saveStudentsToFile(studentMap.values());
+        return removedStudent;
     }
 }

@@ -25,7 +25,7 @@ public class Menu {
             ConsoleUtil.separator();
             mainMenu();
 
-            option = InputUtil.readInt(scanner, "Enter a valid option: ");
+            option = ValidationUtil.readInt(scanner, "Enter a valid option: ");
         
             ConsoleUtil.separator();
 
@@ -53,8 +53,7 @@ public class Menu {
                     5. Delete Student
                     6. Exit
         
-                    Choose an option:
-                        """);
+                    Choose an option:""");
     }
 
     private Student readStudent(String ID) {
@@ -63,13 +62,13 @@ public class Menu {
         String name = scanner.nextLine();
 
         System.out.println("Enter Student age:");
-        int age = InputUtil.readInt(scanner, "Enter a valid age: ");
+        int age = ValidationUtil.readAge(scanner, "Age must be between 2 and 100.");
 
         System.out.println("Enter Student Department:");
         String department = scanner.nextLine();
 
         System.out.println("Enter Student Email:");
-        String email = scanner.nextLine();
+        String email = ValidationUtil.readEmail(scanner, "Enter a valid email: ");
 
         return new Student(ID, name, age, department, email);
     }
@@ -92,8 +91,8 @@ public class Menu {
         if (students.isEmpty()) {
             System.out.println("No student record.".toUpperCase());
         } else {
-            students.forEach(System.out::println);
-            System.out.println();
+            for (Student student : students)
+                System.out.println(student + "\n");
         }
     }
 
@@ -118,10 +117,10 @@ public class Menu {
 
         Student updatedStudent = readStudent(searchID);
 
-        if(studentService.addStudent(updatedStudent))
+        if(studentService.updateStudent(updatedStudent))
             System.out.println("\nStudent updated.".toUpperCase());
         else
-            System.out.println("\nStudent details not updated".toUpperCase());
+            System.out.println("\nStudent not found".toUpperCase());
     }
 
     private void deleteStudentMenu() {
