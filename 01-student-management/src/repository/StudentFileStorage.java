@@ -17,8 +17,8 @@ public class StudentFileStorage {
         Collection<Student> studentList = new ArrayList<>();
 
         // If file doesn't exist, it returns an empty list
-            if (file.exists() == false) 
-                return studentList;
+        if (file.exists() == false) 
+            return studentList;
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -44,9 +44,9 @@ public class StudentFileStorage {
     }
 
     public void saveStudentsToFile(Collection<Student> students){
-        System.out.println(System.getProperty("user.dir"));
-        System.out.println("File: " + new File(FILE_PATH).getAbsolutePath());
-        System.out.println("Data exists: " + new File("data").exists());
+        // System.out.println(System.getProperty("user.dir"));
+        // System.out.println("File: " + new File(FILE_PATH).getAbsolutePath());
+        // System.out.println("Data exists: " + new File("data").exists());
 
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(FILE_PATH))) {
 
@@ -55,9 +55,7 @@ public class StudentFileStorage {
                 fileWriter.newLine();
             }
         } catch (IOException e) {
-            // System.out.println("Error writing file.");
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            System.out.println("Error writing file.");
         }
     }
 }

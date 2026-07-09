@@ -18,28 +18,30 @@ public class Menu {
     }
 
     public void start() {
-        int option = 0; //must
-        final int EXIT = 6;
+        int mainMenuOption = 0; //must
+        final int EXIT = 8;
 
         do {
             ConsoleUtil.separator();
             mainMenu();
 
-            option = ValidationUtil.readInt(scanner, "Enter a valid option: ");
+            mainMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
         
             ConsoleUtil.separator();
 
             //Enhanced Switch (Java 14+)
-            switch (option) {
+            switch (mainMenuOption) {
                 case 1 -> addStudentMenu();
                 case 2 -> viewAllStudentMenu();
                 case 3 -> searchStudentMenu();
-                case 4 -> updateStudentMenu();
-                case 5 -> deleteStudentMenu();
-                case 6 -> System.out.println("Operation Ended. Thank You!");
+                case 4 -> sortStudentMenu();
+                case 5 -> updateStudentMenu();
+                case 6 -> deleteStudentMenu();
+                case 7 -> statisticsMenu();
+                case 8 -> System.out.println("Operation Ended. Thank You!");
                 default -> System.out.println("Please enter a valid option number.");
             }                     
-        } while(option != EXIT);
+        } while(mainMenuOption != EXIT);
     }
 
     private void mainMenu() {
@@ -47,11 +49,26 @@ public class Menu {
                     ======== Student Management ========
         
                     1. Add Student
-                    2. View All Students
+                    2. View All Student
                     3. Search Student
-                    4. Update Student
-                    5. Delete Student
-                    6. Exit
+                    4. Sort Student
+                    5. Update Student
+                    6. Delete Student
+                    7. Statistics
+                    8. Exit
+        
+                    Choose an option:""");
+    }
+
+    private void sortMenu() {
+        System.out.println("""
+                    ======== Sort Students By ========
+        
+                    1. ID
+                    2. Name
+                    3. Age
+                    4. Department
+                    5. Back
         
                     Choose an option:""");
     }
@@ -89,7 +106,7 @@ public class Menu {
         Collection<Student> students = studentService.getAllStudent();
 
         if (students.isEmpty()) {
-            System.out.println("No student record.".toUpperCase());
+            System.out.println("No student record found.".toUpperCase());
         } else {
             for (Student student : students)
                 System.out.println(student + "\n");
@@ -109,6 +126,58 @@ public class Menu {
         }
 
         System.out.println("\n" + foundStudent);
+    }
+
+    private void sortStudentMenu() {
+        int sortMenuOption = 0; //must
+        final int BACK = 5;
+
+        if (studentService.getAllStudent().isEmpty()) {
+            System.out.println("No student record found.".toUpperCase());
+            return;
+        }
+
+        do {
+            ConsoleUtil.separator();
+            sortMenu();
+
+            sortMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
+        
+            ConsoleUtil.separator();
+
+            //Enhanced Switch (Java 14+)
+            switch (sortMenuOption) {
+                case 1 -> sortByIDMenu();
+                case 2 -> sortByNameMenu();
+                case 3 -> sortByAgeMenu();
+                case 4 -> sortByDepartmentMenu();
+                case 5 -> start();
+                default -> System.out.println("Please enter a valid option number.");
+            }                     
+        } while(sortMenuOption != BACK);
+    }
+
+    private void displaySortedStudents(String title, Collection<Student> sortedStudents) {
+        System.out.println("======== Students Sorted By \\'" + title + "\\'========");
+
+        sortedStudents.forEach(System.out::println);
+        System.out.println();
+    }
+
+    private void sortByIDMenu() {
+        displaySortedStudents("ID", studentService.sortByID());
+    }
+
+    private void sortByNameMenu() {
+        displaySortedStudents("Name", studentService.sortByName());
+    }
+
+    private void sortByAgeMenu() {
+        displaySortedStudents("Age", studentService.sortByAge());
+    }
+
+    private void sortByDepartmentMenu() {
+        displaySortedStudents("Department", studentService.sortByDepartment());
     }
 
     private void updateStudentMenu() {
@@ -133,6 +202,10 @@ public class Menu {
             System.out.println("\nStudent deleted.".toUpperCase());
         else
             System.out.println("\nStudent not found.".toUpperCase());
+    }
+
+    private void statisticsMenu() {
+        //To be added
     }
 
     public void close() {
