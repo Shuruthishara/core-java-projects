@@ -18,11 +18,11 @@ public class Menu {
     }
 
     public void start() {
-        int mainMenuOption = 0; //must
-        final int EXIT = 8;
+        int mainMenuOption; 
 
-        do {
-            ConsoleUtil.separator();
+        ConsoleUtil.separator();
+
+        while (true) {
             mainMenu();
 
             mainMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
@@ -38,10 +38,14 @@ public class Menu {
                 case 5 -> updateStudentMenu();
                 case 6 -> deleteStudentMenu();
                 case 7 -> statisticsMenu();
-                case 8 -> System.out.println("Operation Ended. Thank You!");
+                case 8 -> {
+                    System.out.println("Operation Ended. Thank You!");
+                    ConsoleUtil.separator();
+                    return;
+                }
                 default -> System.out.println("Please enter a valid option number.");
             }                     
-        } while(mainMenuOption != EXIT);
+        }
     }
 
     private void mainMenu() {
@@ -63,6 +67,19 @@ public class Menu {
     private void sortMenu() {
         System.out.println("""
                     ======== Sort Students By ========
+        
+                    1. ID
+                    2. Name
+                    3. Age
+                    4. Department
+                    5. Back
+        
+                    Choose an option:""");
+    }
+
+    private void searchMenu() {
+        System.out.println("""
+                    ======== Search Students By ========
         
                     1. ID
                     2. Name
@@ -96,10 +113,13 @@ public class Menu {
 
         Student student = readStudent(ID);
 
-        if(studentService.addStudent(student))
+        if(studentService.addStudent(student)) {
             System.out.println("\nStudent added.".toUpperCase());
-        else
+            ConsoleUtil.separator();
+        } else {
             System.out.println("\nStudent ID already exists".toUpperCase());
+            ConsoleUtil.separator();
+        }
     }
 
     private void viewAllStudentMenu() {
@@ -107,38 +127,87 @@ public class Menu {
 
         if (students.isEmpty()) {
             System.out.println("No student record found.".toUpperCase());
+            ConsoleUtil.separator();
         } else {
             for (Student student : students)
                 System.out.println(student + "\n");
+            ConsoleUtil.separator();
         }
     }
 
     private void searchStudentMenu() {
-        System.out.println("Enter Student ID to be searched:");
-        String searchID = scanner.nextLine();
-        
-        Student foundStudent = studentService.findStudentByID(searchID);
-
-        //The following method is called 'Early Return'; preferrable.
-        if (foundStudent == null){
-            System.out.println("\nStudent not found.".toUpperCase());
-            return;
-        }
-
-        System.out.println("\n" + foundStudent);
-    }
-
-    private void sortStudentMenu() {
-        int sortMenuOption = 0; //must
-        final int BACK = 5;
+        int searchMenuOption;
 
         if (studentService.getAllStudent().isEmpty()) {
             System.out.println("No student record found.".toUpperCase());
             return;
         }
 
-        do {
+        while (true) {
+            searchMenu();
+
+            searchMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
+        
             ConsoleUtil.separator();
+
+            //Enhanced Switch (Java 14+)
+            switch (searchMenuOption) {
+                case 1 -> searchByIDMenu();
+                case 2 -> searchByNameMenu();
+                case 3 -> searchByAgeMenu();
+                case 4 -> searchByDepartmentMenu();
+                case 5 -> {
+                    return; //for return, braces are needed. As case expects expresiion or block, whereas return is a statement.
+                }
+                default -> System.out.println("Please enter a valid option number.");
+            }                     
+        }
+    }
+
+    private void displayFoundStudents(String title, Collection<Student> foundStudents) {
+        if(foundStudents.size() == 0) {
+            System.out.println("\nStudent not found.".toUpperCase());
+            ConsoleUtil.separator();
+            return;
+        }
+
+        ConsoleUtil.separator();
+
+        System.out.println("======== Student(s) Grouped By \'" + title + "\' ========\n");
+
+        foundStudents.forEach(student -> System.out.println(student + "\n"));
+        ConsoleUtil.separator();
+    }
+
+    private void searchByIDMenu() {
+        System.out.println("Enter Student ID to be searched:");
+        displayFoundStudents("ID", studentService.searchByID(scanner.nextLine()));
+    }
+
+    private void searchByNameMenu() {
+        System.out.println("Enter Student Name to be searched:");
+        displayFoundStudents("Name", studentService.searchByName(scanner.nextLine()));
+    }
+
+    private void searchByAgeMenu() {
+        System.out.println("Enter Student Age to be searched:");
+        displayFoundStudents("Age", studentService.searchByAge(ValidationUtil.readAge(scanner, "Age must be between 2 and 100.")));
+    }
+
+    private void searchByDepartmentMenu() {
+        System.out.println("Enter Student Department to be searched:");
+        displayFoundStudents("Department", studentService.searchByDepartment(scanner.nextLine()));
+    }
+
+    private void sortStudentMenu() {
+        int sortMenuOption;
+
+        if (studentService.getAllStudent().isEmpty()) {
+            System.out.println("No student record found.".toUpperCase());
+            return;
+        }
+
+        while (true) {
             sortMenu();
 
             sortMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
@@ -151,17 +220,19 @@ public class Menu {
                 case 2 -> sortByNameMenu();
                 case 3 -> sortByAgeMenu();
                 case 4 -> sortByDepartmentMenu();
-                case 5 -> start();
+                case 5 -> {
+                    return; //for return, braces are needed. As case expects expresiion or block, whereas return is a statement.
+                }
                 default -> System.out.println("Please enter a valid option number.");
             }                     
-        } while(sortMenuOption != BACK);
+        }
     }
 
     private void displaySortedStudents(String title, Collection<Student> sortedStudents) {
-        System.out.println("======== Students Sorted By \\'" + title + "\\'========");
+        System.out.println("======== Students Sorted By \'" + title + "\' ========\n");
 
-        sortedStudents.forEach(System.out::println);
-        System.out.println();
+        sortedStudents.forEach(student -> System.out.println(student + "\n"));
+        ConsoleUtil.separator();
     }
 
     private void sortByIDMenu() {
@@ -186,10 +257,13 @@ public class Menu {
 
         Student updatedStudent = readStudent(searchID);
 
-        if(studentService.updateStudent(updatedStudent))
+        if(studentService.updateStudent(updatedStudent)) {
             System.out.println("\nStudent updated.".toUpperCase());
-        else
+            ConsoleUtil.separator();
+        } else {
             System.out.println("\nStudent not found".toUpperCase());
+            ConsoleUtil.separator();
+        }
     }
 
     private void deleteStudentMenu() {
@@ -198,10 +272,13 @@ public class Menu {
 
         Student removedStudent = studentService.deleteStudent(searchID);
 
-        if (removedStudent != null)
+        if (removedStudent != null) {
             System.out.println("\nStudent deleted.".toUpperCase());
-        else
+            ConsoleUtil.separator();
+        } else {
             System.out.println("\nStudent not found.".toUpperCase());
+            ConsoleUtil.separator();
+        }
     }
 
     private void statisticsMenu() {

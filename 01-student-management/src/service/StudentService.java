@@ -1,6 +1,7 @@
 package service;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import model.Student;
 import repository.StudentRepository;
@@ -25,9 +26,9 @@ public class StudentService {
         return repository.getAll();
     }
 
-    public Student findStudentByID(String ID) {        
-        return repository.findByID(ID);
-    }
+    // public Student findStudentByID(String ID) {        
+    //     return repository.findByID(ID);
+    // }
 
     public boolean updateStudent(Student student) {
         if(!repository.existsByID(student.getStudentID()))
@@ -63,11 +64,32 @@ public class StudentService {
         return sortBy(Comparator.comparingInt(Student::getAge)); //Method Reference
     }
 
-    //.sorted(omparator.comparingInt(Student::getAge))
+    //.sorted(Comparator.comparingInt(Student::getAge))
     //.sorted(Comparator.comparing(student -> student.getAge()))
     //.sorted((a, b) -> a.getAge() - b.getAge())
     //.sorted((a, b) -> Integer.compare(a.getAge(), b.getAge()))
     //Comparator<Student> comp = (a, b) -> Integer.compare(a.getAge(), b.getAge());
     //All are same
 
+    private Collection<Student> searchBy(Predicate<Student> condition) {
+        return repository.getAll().stream()
+                                  .filter(condition)
+                                  .toList();
+    }
+
+    public Collection<Student> searchByID(String ID) {
+        return searchBy(student -> ID.equalsIgnoreCase(student.getStudentID()));
+    }
+
+    public Collection<Student> searchByName(String name) {
+        return searchBy(student -> name.equalsIgnoreCase(student.getName()));
+    }
+
+    public Collection<Student> searchByDepartment(String department) {
+            return searchBy(student -> department.equalsIgnoreCase(student.getDepartment()));
+    }
+
+    public Collection<Student> searchByAge(int age) {
+        return searchBy(student -> student.getAge() == age);
+    }
 }
