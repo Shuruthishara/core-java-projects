@@ -2,6 +2,7 @@ package service;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import model.Student;
 import repository.StudentRepository;
@@ -86,10 +87,55 @@ public class StudentService {
     }
 
     public Collection<Student> searchByDepartment(String department) {
-            return searchBy(student -> department.equalsIgnoreCase(student.getDepartment()));
+        return searchBy(student -> department.equalsIgnoreCase(student.getDepartment()));
     }
 
     public Collection<Student> searchByAge(int age) {
         return searchBy(student -> student.getAge() == age);
+    }
+
+    public Double getAverageAge() {
+        return repository.getAll().stream()
+                                  .collect(Collectors.averagingInt(Student::getAge));
+        
+        // return repository.getAll().stream()
+        //                           .mapToInt(Student::getAge)
+        //                           .average()
+        //                           .orElse(0); //default value, if the list is empty. It is an Optional methos, which is optional.
+    }
+
+    public Collection<Student> getYoungestStudents() {
+        int minAge = repository.getAll().stream()
+                                        .mapToInt(Student::getAge)
+                                        .min()
+                                        .orElseThrow(
+                                            () -> new RuntimeException("No Student Found".toUpperCase())
+                                        );
+        
+        return repository.getAll().stream()
+                                  .filter(student -> student.getAge() == minAge)
+                                  .toList();
+    }
+
+    public Collection<Student> getOldestStudents() {
+        int maxAge = repository.getAll().stream()
+                                        .mapToInt(Student::getAge)
+                                        .max()
+                                        .orElseThrow(
+                                            () -> new RuntimeException("No Student Found".toUpperCase())
+                                        );
+        
+        return repository.getAll().stream()
+                                  .filter(student -> student.getAge() == maxAge)
+                                  .toList();
+    }
+
+    public Map<String, Long> getDepartmentWiseCount() {
+        return repository.getAll().stream()
+                                  .collect(Collectors.groupingBy(
+                                                        Student::getDepartment,
+                                                        TreeMap::new, //uses TreeMap constructor each time, instead of default one (HashMap)
+                                                        Collectors.counting()
+                                                      ));
     }
 }

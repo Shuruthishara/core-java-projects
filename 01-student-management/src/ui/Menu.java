@@ -1,6 +1,7 @@
 package ui;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Scanner;
 
 import model.Student;
@@ -64,7 +65,7 @@ public class Menu {
                     Choose an option:""");
     }
 
-    private void sortMenu() {
+    private void displaySortMenu() {
         System.out.println("""
                     ======== Sort Students By ========
         
@@ -77,7 +78,7 @@ public class Menu {
                     Choose an option:""");
     }
 
-    private void searchMenu() {
+    private void displaySearchMenu() {
         System.out.println("""
                     ======== Search Students By ========
         
@@ -86,6 +87,20 @@ public class Menu {
                     3. Age
                     4. Department
                     5. Back
+        
+                    Choose an option:""");
+    }
+
+    private void displayStatisticsMenu() {
+        System.out.println("""
+                    ======== Statistics Menu ========
+        
+                    1. Total no. of Students
+                    2. Average Age
+                    3. Youngest Student
+                    4. Oldest Student
+                    5. Department-wise Students' Count
+                    6. Back
         
                     Choose an option:""");
     }
@@ -144,7 +159,7 @@ public class Menu {
         }
 
         while (true) {
-            searchMenu();
+            displaySearchMenu();
 
             searchMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
         
@@ -208,7 +223,7 @@ public class Menu {
         }
 
         while (true) {
-            sortMenu();
+            displaySortMenu();
 
             sortMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
         
@@ -282,7 +297,70 @@ public class Menu {
     }
 
     private void statisticsMenu() {
-        //To be added
+        int statisticsMenuOption;
+
+        if (studentService.getAllStudent().isEmpty()) {
+            System.out.println("No student record found.".toUpperCase());
+            return;
+        }
+
+        while (true) {
+            displayStatisticsMenu();
+
+            statisticsMenuOption = ValidationUtil.readInt(scanner, "Enter a valid option: ");
+        
+            ConsoleUtil.separator();
+
+            //Enhanced Switch (Java 14+)
+            switch (statisticsMenuOption) {
+                case 1 -> totalNumberOfStudentsMenu();
+                case 2 -> averageAgeMenu();
+                case 3 -> youngestStudentsMenu();
+                case 4 -> oldestStudentsMenu();
+                case 5 -> departmentWiseCountMenu();
+                case 6 -> {
+                    return; //for return, braces are needed. As case expects expresiion or block, whereas return is a statement.
+                }
+                default -> System.out.println("Please enter a valid option number.");
+            }                     
+        }
+    }
+
+    private void totalNumberOfStudentsMenu() {
+        System.out.println("Total no. of Students: " + studentService.getAllStudent().size());
+        ConsoleUtil.separator();
+    }
+
+    private void averageAgeMenu() {
+        System.out.println("Students' average age: " + studentService.getAverageAge());
+        ConsoleUtil.separator();
+    }
+
+    private void youngestStudentsMenu() {
+        System.out.println("======== Youngest Student(s) ========\n");
+
+        for (Student student : studentService.getYoungestStudents())
+            System.out.println(student + "\n");
+
+        ConsoleUtil.separator();
+    }
+
+    private void oldestStudentsMenu() {
+        System.out.println("======== Oldest Student(s) ========\n");
+        
+        for (Student student : studentService.getOldestStudents())
+            System.out.println(student + "\n");
+
+        ConsoleUtil.separator();
+    }
+
+    private void departmentWiseCountMenu() {
+        System.out.println("======== Department-wise Students' Count ======== \n");
+
+        for (Map.Entry<String, Long> entry : studentService.getDepartmentWiseCount().entrySet())
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+
+        ConsoleUtil.separator();
     }
 
     public void close() {
